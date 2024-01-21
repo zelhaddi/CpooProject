@@ -1,0 +1,455 @@
+openapi: 3.0.3
+info:
+  description: server API
+  title: GoatChat API
+  version: 1.0.0
+servers:
+- url: http://localhost:8080/
+security:
+- CookieAuth: []
+tags:
+- description: Authentication.
+  name: User
+- description: Conversation manager.
+  name: Conversation
+- description: Message manager.
+  name: Message
+paths:
+  /conversation/getAllConversationsOfUser:
+    get:
+      operationId: getAllConversationOfUser
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationDisplayDTO'
+          description: OK
+      summary: GET conversation/getAllConversationsOfUser
+      tags:
+      - Conversation
+      x-accepts: application/json
+  /user/signup:
+    post:
+      operationId: signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentialsDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: OK
+      summary: POST user/signup
+      tags:
+      - User
+      x-content-type: application/json
+      x-accepts: application/json
+  /user/all:
+    get:
+      operationId: getAllUsers
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/UserProfileDTO'
+                type: array
+          description: OK
+      summary: GET user/all
+      tags:
+      - User
+      x-accepts: application/json
+  /user/signin:
+    post:
+      operationId: signin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentialsDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: OK
+      summary: POST user/signin
+      tags:
+      - User
+      x-content-type: application/json
+      x-accepts: application/json
+  /user/username:
+    get:
+      operationId: getUserName
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: OK
+      summary: GET user/username
+      tags:
+      - User
+      x-accepts: application/json
+  /user/getDomain:
+    post:
+      operationId: getDomain
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: string
+          description: OK
+      summary: POST user/getDomain
+      tags:
+      - User
+      x-content-type: application/json
+      x-accepts: application/json
+  /user/profile:
+    get:
+      operationId: profile
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileDTO'
+          description: OK
+      summary: GET user/profile
+      tags:
+      - User
+      x-accepts: application/json
+  /user/signout:
+    post:
+      operationId: signout
+      responses:
+        "200":
+          description: OK
+      summary: POST user/signout
+      tags:
+      - User
+      x-accepts: application/json
+  /user/{login}:
+    delete:
+      operationId: delete
+      parameters:
+      - explode: false
+        in: path
+        name: login
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: OK
+      summary: "DELETE user/{login}"
+      tags:
+      - User
+      x-accepts: application/json
+  /user/getPicture:
+    post:
+      operationId: getPicture
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PictureDTO'
+          description: OK
+      summary: POST user/getPicture
+      tags:
+      - User
+      x-content-type: application/json
+      x-accepts: '*/*'
+  /message:
+    post:
+      operationId: messagePost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewMessageDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MessageDTO'
+          description: OK
+      summary: POST message
+      tags:
+      - Message
+      x-content-type: application/json
+      x-accepts: '*/*'
+  /message/getAllMessagesOfConversation:
+    post:
+      operationId: getAllMessageOfConversation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                items:
+                  $ref: '#/components/schemas/Message'
+                type: array
+          description: OK
+      summary: POST message/getAllMessagesOfConversation
+      tags:
+      - Message
+      x-content-type: application/json
+      x-accepts: '*/*'
+  /message/getLastMessagesOfConversation:
+    post:
+      operationId: getLastMessageOfConversation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Message'
+          description: OK
+      summary: POST message/getLastMessagesOfConversation
+      tags:
+      - Message
+      x-content-type: application/json
+      x-accepts: '*/*'
+  /message/addReactionToMessage:
+    post:
+      operationId: addReactionToMessage
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageReaction'
+        required: true
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MessageReaction'
+          description: OK
+      summary: POST message/addReactionToMessage
+      tags:
+      - Message
+      x-content-type: application/json
+      x-accepts: '*/*'
+  /message/deleteMessage/{id}:
+    delete:
+      operationId: deleteMessage
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          format: uuid
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ResponseEntity'
+          description: OK
+      summary: "DELETE message/deleteMessage/{id}"
+      tags:
+      - Message
+      x-accepts: '*/*'
+components:
+  schemas:
+    Message:
+      example:
+        from: from
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        to: to
+        toDomain: toDomain
+        type: type
+        body: body
+        timestamp: 0
+      properties:
+        id:
+          format: uuid
+          type: string
+        timestamp:
+          format: int64
+          type: integer
+        from:
+          type: string
+        to:
+          type: string
+        type:
+          type: string
+        body:
+          type: string
+        toDomain:
+          type: string
+      type: object
+    Conversation:
+      properties:
+        id:
+          format: uuid
+          type: string
+        messages:
+          items:
+            $ref: '#/components/schemas/Message'
+          type: array
+        username1:
+          type: string
+        username2:
+          type: string
+      type: object
+    ConversationDisplayDTO:
+      example:
+        isIntern: true
+        lastMessage: lastMessage
+        isSeen: true
+        picture: picture
+        username: username
+        timestamp: 0
+      properties:
+        username:
+          type: string
+        picture:
+          type: string
+        lastMessage:
+          type: string
+        timestamp:
+          format: int64
+          type: integer
+        isSeen:
+          type: boolean
+        isIntern:
+          type: boolean
+      type: object
+    UserCredentialsDTO:
+      example:
+        password: password
+        domain: domain
+        pictureBase64: pictureBase64
+        login: login
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+        domain:
+          type: string
+        pictureBase64:
+          type: string
+      type: object
+    UserProfileDTO:
+      example:
+        login: login
+      properties:
+        login:
+          type: string
+      type: object
+    PictureDTO:
+      example:
+        pictureBase64: pictureBase64
+      properties:
+        pictureBase64:
+          type: string
+      type: object
+    MessageDTO:
+      example:
+        from: from
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        to: to
+        type: type
+        body: body
+        timestamp: 0
+      properties:
+        id:
+          format: uuid
+          type: string
+        timestamp:
+          format: int64
+          type: integer
+        from:
+          type: string
+        to:
+          type: string
+        type:
+          type: string
+        body:
+          type: string
+      type: object
+    MessageReaction:
+      example:
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        type: type
+      properties:
+        id:
+          format: uuid
+          type: string
+        type:
+          type: string
+      type: object
+    HttpHeaders:
+      properties: {}
+      type: object
+    ResponseEntity:
+      example:
+        headers: "{}"
+      properties:
+        headers:
+          properties: {}
+          type: object
+      type: object
+    NewMessageDTO:
+      example:
+        to: to
+        toDomain: toDomain
+        type: type
+        body: body
+      properties:
+        to:
+          type: string
+        type:
+          type: string
+        body:
+          type: string
+        toDomain:
+          type: string
+      type: object
+

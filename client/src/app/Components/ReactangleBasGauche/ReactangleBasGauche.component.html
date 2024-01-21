@@ -1,0 +1,26 @@
+<div class="h-full w-full bg-transparent" style="top: 80px;">
+  <div class="h-full w-full absolute overflow-scroll overflow-x-hidden" style="top: 85px; background-color: #C9B2C9;">
+    <div class="h-full w-full absolute mt-2 " style=" left: 17px; background-color: #C9B2C9;">
+      <ul class="h-full w-full">
+        <ng-container *ngIf="isConversationExist">
+          <li *ngFor="let conversation of conversations" style="width: 356px; height: 70px;margin-bottom:30px;"class="conversation-item">
+            <ng-container *ngIf="conversation.isIntern">
+              <app-ConversationHistoriqueComponent [conversation]="conversation" (click)="onConversationClick(conversation.username); updatePicture(conversation.picture); updateIsInterne(conversation.isIntern)" ></app-ConversationHistoriqueComponent>
+            </ng-container>
+            <ng-container *ngIf="!conversation.isIntern   ">
+              <app-ConversationHistoriqueComponent [conversation]="conversation" (click)="onConversationClick(conversation.username); updatePicture(conversation.picture); updateIsInterne(conversation.isIntern)"></app-ConversationHistoriqueComponent>
+            </ng-container>
+          </li>
+        </ng-container>
+        <ng-container *ngIf="!isConversationExist">
+          <div class="h-full d-flex align-items-center justify-content-center">
+            <div class="rounded" style="background-color: white; text-align: center; padding: 10px;">
+              <p>Aucune conversation en cours</p>
+            </div>
+          </div>
+        </ng-container>
+      </ul>
+    </div>
+  </div>
+</div>
+

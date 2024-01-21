@@ -1,0 +1,151 @@
+package fr.mightycode.cpoo.server.controller;
+
+import fr.mightycode.cpoo.server.dto.PictureDTO;
+import fr.mightycode.cpoo.server.dto.UserCredentialsDTO;
+import fr.mightycode.cpoo.server.dto.UserProfileDTO;
+import fr.mightycode.cpoo.server.model.Conversation;
+import fr.mightycode.cpoo.server.service.UserService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("user")
+@RequiredArgsConstructor
+@CrossOrigin
+public class UserController {
+
+  private final UserService userService;
+
+  private final HttpServletRequest httpServletRequest;
+
+
+  @PostMapping(value = "signup", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Map<String, String>> signup(@RequestBody final UserCredentialsDTO user) {
+    try {
+      boolean connected;
+      if(!user.pictureBase64().equals("")){
+        connected = userService.signup(user.login(), user.password(), user.domain(), user.pictureBase64(), true);
+      }
+      else{
+        connected = userService.signup(user.login(), user.password(), user.domain(), "data:image/png;base64,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", true);
+
+      }
+      if (!connected)
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "Already signed in");
+      else {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Connection réussi!!!");
+        return ResponseEntity.ok(response);
+      }
+    } catch (Exception ex) {
+      if (ex.getCause() instanceof BadCredentialsException) {
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Bad credentials");
+      }
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex);
+    }
+  }
+  @GetMapping(value = "all", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<List<UserProfileDTO>> getAllUsers() {
+    List<UserProfileDTO> allUsers = userService.getAllUsers();
+    return ResponseEntity.ok(allUsers);
+  }
+
+
+
+  @PostMapping(value = "signin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Map<String, String>> signin(@RequestBody final UserCredentialsDTO user) {
+    try {
+      int connected = userService.signin(user.login(), user.password());
+      if (connected == 0)
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "Already signed in");
+      else if (connected == 1) {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Connection réussi!!!" + user.login());
+        return ResponseEntity.ok(response);
+      } else if (connected == 2) {
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Mot de passe erroné");
+      }
+    }
+    catch (final ServletException ex) {
+      if (ex.getCause() instanceof BadCredentialsException) {
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Bad credentials");
+      }
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex);
+    }
+      return null;
+  }
+
+
+
+  @GetMapping(value = "username", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Map<String, String>> getUserName() {
+    String username = userService.getUsername();
+    if (username != null) {
+      Map<String, String> response = new HashMap<>();
+      response.put("username", username);
+      return ResponseEntity.ok(response);
+    } else {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+    }
+  }
+
+  @PostMapping(value = "getDomain", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<Map<String, String>> getDomain(@RequestBody UserProfileDTO userProfileDTO) {
+    String domain = userService.getDomainByUsername(userProfileDTO.login());
+    if (domain != null) {
+      Map<String, String> response = new HashMap<>();
+      response.put("domain", domain);
+      return ResponseEntity.ok(response);
+    } else {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+    }
+  }
+
+
+  @GetMapping(value = "profile", produces = MediaType.APPLICATION_JSON_VALUE)
+  public UserProfileDTO profile(Principal user) {
+    return new UserProfileDTO(user.getName());
+  }
+
+  @PostMapping(value = "signout")
+  public void signout() {
+    try {
+      userService.signout();
+    }
+    catch (final ServletException ex) {
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex);
+    }
+  }
+
+  @DeleteMapping(value = "/{login}")
+  public void delete(@PathVariable("login") String login) {
+    if (!userService.delete(login))
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User does not exist");
+  }
+
+  @PostMapping(value = "getPicture", consumes = MediaType.APPLICATION_JSON_VALUE )
+  public ResponseEntity<PictureDTO> getPicture(@RequestBody UserProfileDTO userProfileDTO) {
+    System.out.println("usernamdczczdcze : " + userProfileDTO.login());
+    String picture64 = userService.getPictureByUsername(userProfileDTO.login());
+    PictureDTO pictureDTO = new PictureDTO(picture64);
+    if (pictureDTO != null) {
+      return ResponseEntity.ok(pictureDTO);
+    } else {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+    }
+  }
+
+
+}

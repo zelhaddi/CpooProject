@@ -1,0 +1,16 @@
+<div class="absolute top-0 w-full" style="background-color: #DFD7DC; height: 80px;">
+  <!-- Le petit cercle à gauche -->
+  <ng-container *ngIf="isIntern">
+    <img  class="absolute rounded-full" [src]="photo" alt="User Picture" style="top: 18px; left: 30px; width: 40px; height: 40px; overflow: hidden; border-radius: 50%"/>
+  </ng-container>
+  <ng-container *ngIf="!isIntern">
+    <p class="w-1/3 h-auto mr-6 h-full w-full rounded-full absolute flex items-center justify-center" style=" top: 18px; left: 30px;width: 40px; height: 40px; background-color: #F5FBEF; color: black;">
+      {{ photo }}
+    </p>
+  </ng-container>
+
+  <!-- Rectangle contenant le nom du contact -->
+  <div class="absolute" style="background-color: transparent;left:29px ;height: 80px; width: 200px; right: 30px; text-align: center; display: flex; align-items: center; justify-content: center;">
+    <p>{{ username }}</p>
+  </div>
+</div>

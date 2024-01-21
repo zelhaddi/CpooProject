@@ -1,0 +1,16 @@
+.hoverBoutonSeConnecter:hover{
+  background-color: #B38EB6;
+}
+.circular-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #ccc;
+  overflow: hidden;
+}
+
+.circular-image:hover {
+  cursor: pointer;
+}
